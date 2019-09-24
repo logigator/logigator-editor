@@ -58,7 +58,8 @@ export class SettingsInfoBoxComponent implements OnChanges, OnDestroy {
 		});
 		this.formSubscription = this.propertiesFrom.valueChanges.subscribe((data: any) => {
 			this.elemType.rotation = Number(data.rotation);
-			this.elemType.numInputs = data.numInputs;
+			if (data.numInputs > 0 && this.elemType.hasVariableInputs)
+				this.elemType.numInputs = data.numInputs;
 		});
 	}
 
@@ -73,7 +74,7 @@ export class SettingsInfoBoxComponent implements OnChanges, OnDestroy {
 			if (data.rotation !== element.rotation) {
 				this.projects.currProject.rotateComponent(this.selectedCompId, Number(data.rotation));
 			}
-			if (data.numInputs !== element.numInputs) {
+			if (data.numInputs !== element.numInputs && data.numInputs > 0 && this.elemType.hasVariableInputs) {
 				this.projects.currProject.setNumInputs(this.selectedCompId, data.numInputs);
 			}
 		});

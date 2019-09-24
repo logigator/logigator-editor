@@ -211,11 +211,15 @@ export class ProjectState {
 	public rotateComp(element: Element, rotation: number, endPos?: PIXI.Point): void {
 		element.rotation = rotation;
 		element.endPos = endPos || Elements.calcEndPos(element.pos, element.numInputs, element.numOutputs, rotation);
+		this.removeFromChunks(element);
+		this.loadIntoChunks(element);
 	}
 
 	public setNumInputs(element: Element, numInputs: number, endPos?: PIXI.Point): void {
 		element.numInputs = numInputs;
 		element.endPos = endPos || Elements.calcEndPos(element.pos, numInputs, element.numOutputs, element.rotation);
+		this.removeFromChunks(element);
+		this.loadIntoChunks(element);
 	}
 
 

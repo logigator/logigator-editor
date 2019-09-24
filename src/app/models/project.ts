@@ -229,7 +229,7 @@ export class Project {
 	}
 
 
-	public setNumInputs(id: number, numInputs: number): boolean  {
+	public setNumInputs(id: number, numInputs: number): boolean {
 		const element = this._currState.getElementById(id);
 		if (element.typeId === 0)
 			return;
