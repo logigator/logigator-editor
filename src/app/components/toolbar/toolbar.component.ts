@@ -47,11 +47,10 @@ export class ToolbarComponent implements OnInit {
 	}
 
 	public test(): void {
-		CopyService.staticInstance.copyIds(SelectionService.staticInstance.selectedIds());
+		this.projectService.currProject.test();
 	}
 
 	public test1(): void {
-		this.projectService.currProject.addElements(CopyService.staticInstance.copiedElements);
 		this.printWires();
 	}
 
