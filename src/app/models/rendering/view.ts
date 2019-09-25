@@ -31,7 +31,7 @@ export class View extends PIXI.Container {
 	private _viewInteractionManager: ViewInteractionManager;
 	private _simViewInteractionManager: SimulationViewInteractionManager;
 
-	private readonly _htmlContainer: HTMLElement;
+	public readonly htmlContainer: HTMLElement;
 
 	private _chunks: PIXI.Container[][] = [];
 	private _gridGraphics: PIXI.Graphics[][] = [];
@@ -46,13 +46,13 @@ export class View extends PIXI.Container {
 	constructor(projectId: number, htmlContainer: HTMLElement, onlySimMode = false) {
 		super();
 		this._projectId = projectId;
-		this._htmlContainer = htmlContainer;
+		this.htmlContainer = htmlContainer;
 		this.interactive = true;
 		this.sortableChildren = true;
 		this._onlySimMode = onlySimMode;
 
 		this.zoomPan = new ZoomPan(this);
-		this._zoomPanInputManager = new ZoomPanInputManager(this._htmlContainer);
+		this._zoomPanInputManager = new ZoomPanInputManager(this.htmlContainer);
 		if (!this._onlySimMode) {
 			this._viewInteractionManager = new ViewInteractionManager(this);
 		}
@@ -74,7 +74,7 @@ export class View extends PIXI.Container {
 	}
 
 	public updateChunks() {
-		const currentlyOnScreen = this.zoomPan.isOnScreen(this._htmlContainer.offsetHeight, this._htmlContainer.offsetWidth);
+		const currentlyOnScreen = this.zoomPan.isOnScreen(this.htmlContainer.offsetHeight, this.htmlContainer.offsetWidth);
 		const chunksToRender = ProjectsService.staticInstance.currProject.chunksToRender(
 			Grid.getGridPosForPixelPos(currentlyOnScreen.start),
 			Grid.getGridPosForPixelPos(currentlyOnScreen.end)
@@ -120,7 +120,7 @@ export class View extends PIXI.Container {
 		this._chunksToRender = chunksToRender;
 	}
 
-	private drawConnectionPoint(graphics, pos) {
+	public drawConnectionPoint(graphics, pos) {
 		const size = this.calcConnPointSize();
 		graphics.clear();
 		graphics.position = this.adjustConnPointPosToSize(pos, size);
@@ -133,9 +133,10 @@ export class View extends PIXI.Container {
 	}
 
 	public adjustConnPointPosToSize(pos: PIXI.Point, size: number): PIXI.Point {
-		pos.x -= size / 2 / this.zoomPan.currentScale;
-		pos.y -= size / 2 / this.zoomPan.currentScale;
-		return pos;
+		return new PIXI.Point(
+			pos.x - size / 2 / this.zoomPan.currentScale,
+			pos.y - size / 2 / this.zoomPan.currentScale
+		);
 	}
 
 	private updateWireSprite(element: Element, graphics: PIXI.Graphics) {
@@ -150,7 +151,9 @@ export class View extends PIXI.Container {
 	private updateComponentSprite(element: Element, graphics: PIXI.Graphics) {
 		graphics.clear();
 		const elemType = ElementProviderService.staticInstance.getElementById(element.typeId);
-		CompSpriteGenerator.updateGraphics(elemType.symbol, element.numInputs, element.rotation, this.zoomPan.currentScale, graphics);
+		CompSpriteGenerator.updateGraphics(
+			elemType.symbol, element.numInputs, element.numOutputs, element.rotation, this.zoomPan.currentScale, graphics
+		);
 	}
 
 	private createChunk(x: number, y: number): boolean {
@@ -208,8 +211,8 @@ export class View extends PIXI.Container {
 
 	private applyZoom(dir: 'in' | 'out' | '100', centerX?: number, centerY?: number): boolean {
 		if (!centerX || !centerY) {
-			centerX = this._htmlContainer.offsetWidth / 2;
-			centerY = this._htmlContainer.offsetHeight / 2;
+			centerX = this.htmlContainer.offsetWidth / 2;
+			centerY = this.htmlContainer.offsetHeight / 2;
 		}
 		if (dir === 'in') {
 			return this.zoomPan.zoomBy(1.25, centerX, centerY);
@@ -239,7 +242,9 @@ export class View extends PIXI.Container {
 
 	private placeComponentOnView(element: Element) {
 		const elemType = ElementProviderService.staticInstance.getElementById(element.typeId);
-		const sprite = CompSpriteGenerator.getComponentSprite(elemType.symbol, element.numInputs, element.rotation, this.zoomPan.currentScale);
+		const sprite = CompSpriteGenerator.getComponentSprite(
+			elemType.symbol, element.numInputs, element.numOutputs, element.rotation, this.zoomPan.currentScale
+		);
 		sprite.position = Grid.getLocalChunkPixelPosForGridPos(element.pos);
 		sprite.name = element.id.toString();
 
@@ -270,7 +275,7 @@ export class View extends PIXI.Container {
 		this.allElements.set(element.id, elemSprite);
 	}
 
-	private addLineToWireGraphics(graphics: PIXI.Graphics, endPos: PIXI.Point, startPos: PIXI.Point) {
+	public addLineToWireGraphics(graphics: PIXI.Graphics, endPos: PIXI.Point, startPos: PIXI.Point) {
 		graphics.lineStyle(1 / this.zoomPan.currentScale, ThemingService.staticInstance.getEditorColor('wire'));
 		graphics.moveTo(0, 0);
 		graphics.lineTo(endPos.x - startPos.x, endPos.y - startPos.y);
