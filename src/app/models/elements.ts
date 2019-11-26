@@ -28,6 +28,8 @@ export abstract class Elements {
 		if (element.endPos)
 			out.endPos = element.endPos.clone();
 		out.options = out.options ? [...out.options] : undefined;
+		out.inputs = out.inputs ? [...out.inputs] : undefined;
+		out.outputs = out.outputs ? [...out.outputs] : undefined;
 		return out;
 	}
 
@@ -65,6 +67,8 @@ export abstract class Elements {
 			typeId,
 			numInputs: type.numInputs,
 			numOutputs: type.numOutputs,
+			inputs: typeId === 0 ? undefined : [],
+			outputs: typeId === 0 ? undefined : [],
 			pos,
 			endPos,
 			rotation: type.rotation,

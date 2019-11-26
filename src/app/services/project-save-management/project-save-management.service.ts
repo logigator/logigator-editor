@@ -615,6 +615,8 @@ export class ProjectSaveManagementService {
 				return e;
 			const out = Elements.clone(e);
 			delete out.endPos;
+			delete out.inputs;
+			delete out.outputs;
 			return out;
 		});
 	}

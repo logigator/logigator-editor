@@ -462,8 +462,21 @@ export class Project {
 	}
 
 
-
 	private autoAssemble(elements: Element[]): Action[] {
+		if (1 === 1) {
+			return this.autoAssembleNew(elements);
+		} else {
+			return this.autoAssembleOld(elements);
+		}
+	}
+
+	private autoAssembleNew(elements: Element[]): Action[] {
+		Elements.removeDuplicates(elements);
+		const out: Action[] = [];
+		return out;
+	}
+
+	private autoAssembleOld(elements: Element[]): Action[] {
 		Elements.removeDuplicates(elements);
 		const out: Action[] = [];
 		const merged = this.autoMerge(elements);

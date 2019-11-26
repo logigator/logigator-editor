@@ -7,6 +7,9 @@ export interface Element {
 	numInputs: number;
 	numOutputs: number;
 
+	inputs?: number[];
+	outputs?: number[];
+
 	pos: PIXI.Point;
 	endPos?: PIXI.Point;
 
