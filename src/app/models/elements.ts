@@ -28,8 +28,10 @@ export abstract class Elements {
 		if (element.endPos)
 			out.endPos = element.endPos.clone();
 		out.options = out.options ? [...out.options] : undefined;
-		out.inputs = out.inputs ? [...out.inputs] : undefined;
-		out.outputs = out.outputs ? [...out.outputs] : undefined;
+		out.connections = [];
+		for (const cons of element.connections) {
+			out.connections.push([...cons]);
+		}
 		return out;
 	}
 
@@ -62,13 +64,15 @@ export abstract class Elements {
 		const endPos = _endPos ? _endPos.clone() : undefined;
 		if (pos && endPos)
 			Elements.correctPosOrder(pos, endPos);
+		const connections = [];
+		for (let i = 0; i < (typeId === 0 ? 2 : (type.numInputs + type.numOutputs)); i++)
+			connections.push([]);
 		return {
 			id: -1,
 			typeId,
 			numInputs: type.numInputs,
 			numOutputs: type.numOutputs,
-			inputs: typeId === 0 ? undefined : [],
-			outputs: typeId === 0 ? undefined : [],
+			connections,
 			pos,
 			endPos,
 			rotation: type.rotation,

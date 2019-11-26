@@ -95,12 +95,42 @@ export class ProjectState {
 			if (!this._chunks[coord.x][coord.y].elements.find(e => e.id === element.id))
 				this._chunks[coord.x][coord.y].elements.push(element);
 		}
+		this.loadConnectedElements(element);
 	}
 
 	private removeFromChunks(element: Element): void {
 		const chunkCoords = CollisionFunctions.inRectChunks(element.pos, element.endPos, Elements.wireEnds(element));
 		for (const chunk of this.chunksFromCoords(chunkCoords)) {
 			chunk.elements = chunk.elements.filter(elem => elem.id !== element.id);
+		}
+		this.removeConnectedElements(element);
+	}
+
+	private loadConnectedElements(element: Element): void {
+		const positions = Elements.wireEnds(element);
+		for (let i = 0; i < positions.length; i++) {
+			for (const other of this.elemsOnPoint(positions[i])) {
+				if (element.id === other.id)
+					return;
+				const otherConIndex = Elements.wireEndIndex(other, positions[i]);
+				if (!element.connections[i].find(id => id === other.id))
+					element.connections[i].push(other.id);
+				if (!other.connections[otherConIndex].find(id => id === element.id))
+					other.connections[otherConIndex].push(element.id);
+			}
+		}
+	}
+
+	private removeConnectedElements(element: Element): void {
+		const positions = Elements.wireEnds(element);
+		for (let i = 0; i < positions.length; i++) {
+			for (const other of this.elemsOnPoint(positions[i])) {
+				if (element.id === other.id)
+					return;
+				const otherConIndex = Elements.wireEndIndex(other, positions[i]);
+				element.connections[i] = element.connections[i].filter(id => id !== other.id);
+				other.connections[otherConIndex] = other.connections[otherConIndex].filter(id => id !== element.id);
+			}
 		}
 	}
 
