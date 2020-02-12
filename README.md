@@ -42,3 +42,5 @@ After you built the simulation-code, just copy the contents of `logigator-simula
 ### Building the App
 Browser: `npm run build`<br>
 Electron: `npm run build:electron:*platform*`
+
+test
