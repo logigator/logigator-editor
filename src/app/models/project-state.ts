@@ -473,7 +473,7 @@ export class ProjectState {
 		const chunk = CollisionFunctions.gridPosToChunk(pos);
 		const outWires: Element[] = [];
 		for (const elem of this.elementsInChunk(chunk)) {
-			if (CollisionFunctions.elemHasWirePoint(elem, pos)) {
+			if (CollisionFunctions.isPointOnWire(elem, pos)) {
 				outWires.push(elem);
 			}
 		}
